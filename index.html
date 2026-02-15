@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>读一点，写一点</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --bg: #FBF8F4;
+    --bg-warm: #F5F0E8;
+    --text-primary: #2C2416;
+    --text-secondary: #7A6F60;
+    --text-light: #A89E8E;
+    --accent-warm: #D4956A;
+    --accent-deep: #B8734A;
+    --accent-soft: #E8C9A0;
+    --card-bg: #FFFFFF;
+    --card-shadow: 0 2px 20px rgba(44, 36, 22, 0.06);
+    --card-shadow-hover: 0 4px 30px rgba(44, 36, 22, 0.10);
+    --border: #E8E2D8;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: 
+      radial-gradient(ellipse at 20% 0%, rgba(212, 149, 106, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(123, 164, 184, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    text-align: center;
+    padding: 24px 0 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+  .header-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+  }
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 300;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ===== CARDS & INPUTS ===== */
+  .book-info-card, .emotion-section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 16px;
+    opacity: 0;
+  }
+  .book-info-card { animation: fadeUp 0.6s ease 0.15s forwards; }
+  .emotion-section { animation: fadeUp 0.6s ease 0.25s forwards; padding: 24px; }
+
+  .input-group { margin-bottom: 20px; }
+  .input-group:last-child { margin-bottom: 0; }
+  .input-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .text-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-primary);
+    background: var(--bg);
+    transition: var(--transition);
+    outline: none;
+  }
+  .text-input:focus {
+    border-color: var(--accent-warm);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(212, 149, 106, 0.12);
+  }
+  .text-input::placeholder { color: var(--text-light); font-weight: 300; }
+
+  /* ===== EMOTION GRID ===== */
+  .emotion-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .emotion-subtitle {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 18px;
+  }
+  .emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .emotion-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .emotion-btn:active { transform: scale(0.96); }
+  .emotion-btn .emoji { font-size: 26px; margin-bottom: 6px; transition: transform 0.3s ease; }
+  .emotion-btn .label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .emotion-btn.selected {
+    border-color: var(--accent-warm);
+    background: rgba(212, 149, 106, 0.08);
+    box-shadow: 0 0 0 3px rgba(212, 149, 106, 0.10);
+  }
+  .emotion-btn.selected .emoji { transform: scale(1.15); }
+  .emotion-btn.selected .label { color: var(--accent-deep); font-weight: 600; }
+  .multi-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .multi-hint.visible { opacity: 1; }
+
+  /* ===== BUTTONS ===== */
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-warm), var(--accent-deep));
+    cursor: pointer;
+    transition: var(--transition);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.35s forwards;
+    letter-spacing: 1px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:disabled { opacity: 0.4 !important; cursor: not-allowed; }
+  .btn-primary:not(:disabled):active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 12px rgba(184, 115, 74, 0.3);
+  }
+
+  .btn-secondary {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-secondary);
+    background: var(--bg);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-secondary:active { background: var(--border); }
+
+  .btn-next {
+    flex: 2;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-warm), var(--accent-deep));
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-next:active { transform: scale(0.98); }
+
+  .btn-export {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-warm), var(--accent-deep));
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-export:active { transform: scale(0.98); }
+
+  .btn-export-outline {
+    flex: 1;
+    padding: 14px;
+    border: 1.5px solid var(--accent-soft);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--accent-deep);
+    background: transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-export-outline:active { background: rgba(212,149,106,0.06); }
+
+  /* ===== QUESTION FLOW ===== */
+  .question-flow { padding-top: 8px; }
+  .question-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+  }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: var(--transition);
+  }
+  .progress-dot.done { background: var(--accent-warm); }
+  .progress-dot.current { background: var(--accent-deep); width: 20px; border-radius: 4px; }
+  .progress-text { font-size: 12px; color: var(--text-light); }
+
+  .question-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .question-emoji { font-size: 32px; margin-bottom: 14px; display: inline-block; }
+  .question-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 18px;
+  }
+  .question-hint {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+  }
+  .answer-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-primary);
+    background: var(--bg);
+    transition: var(--transition);
+    outline: none;
+    resize: vertical;
+    line-height: 1.7;
+  }
+  .answer-textarea:focus {
+    border-color: var(--accent-warm);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(212, 149, 106, 0.12);
+  }
+  .answer-textarea::placeholder { color: var(--text-light); font-weight: 300; }
+  .question-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+  .expand-section {
+    text-align: center;
+    margin: 8px 0 16px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+  .expand-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: 1.5px dashed var(--accent-soft);
+    border-radius: 24px;
+    background: transparent;
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--accent-deep);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .expand-btn:active { transform: scale(0.96); }
+
+  /* ===== COMPLETE SCREEN ===== */
+  .complete-screen { text-align: center; padding-top: 60px; }
+  .complete-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+    display: inline-block;
+    opacity: 0;
+    animation: popIn 0.6s ease forwards;
+  }
+  .complete-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+  .complete-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 36px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.3s forwards;
+  }
+
+  .summary-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    text-align: left;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.4s forwards;
+  }
+  .summary-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-book-title { font-family: 'Noto Serif SC', serif; font-size: 16px; font-weight: 600; }
+  .summary-meta { font-size: 12px; color: var(--text-light); }
+  .summary-emotion-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .summary-emotion-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 12px;
+    background: rgba(212, 149, 106, 0.1);
+    color: var(--accent-deep);
+    font-weight: 500;
+  }
+  .summary-qa { margin-bottom: 14px; }
+  .summary-qa:last-child { margin-bottom: 0; }
+  .summary-q { font-size: 12px; color: var(--text-light); margin-bottom: 4px; font-weight: 500; }
+  .summary-a { font-size: 14px; color: var(--text-primary); line-height: 1.7; }
+
+  .complete-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.45s forwards;
+  }
+  .btn-restart {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-secondary);
+    background: var(--card-bg);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.5s forwards;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-restart:active { background: var(--bg-warm); }
+
+  /* ===== HISTORY ===== */
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+  }
+  .history-header h2 { font-family: 'Noto Serif SC', serif; font-size: 18px; font-weight: 700; }
+  .history-back {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--card-bg);
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .history-back:active { background: var(--bg-warm); }
+
+  .history-stats {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease 0.1s forwards;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+  }
+  .stat-number { font-family: 'Noto Serif SC', serif; font-size: 22px; font-weight: 700; color: var(--accent-deep); }
+  .stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .history-list { display: flex; flex-direction: column; gap: 12px; }
+  .history-entry {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: var(--transition);
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .history-entry:active { box-shadow: var(--card-shadow-hover); transform: translateY(-1px); }
+  .history-entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .history-entry-title { font-family: 'Noto Serif SC', serif; font-size: 15px; font-weight: 600; }
+  .history-entry-date { font-size: 11px; color: var(--text-light); white-space: nowrap; margin-left: 8px; }
+  .history-entry-emotions { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+  .history-entry-emotion { font-size: 11px; padding: 2px 8px; border-radius: 12px; background: rgba(212, 149, 106, 0.08); color: var(--accent-deep); }
+  .history-entry-preview {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .history-empty { text-align: center; padding: 60px 20px; color: var(--text-light); font-size: 14px; line-height: 1.8; }
+  .history-empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .history-export-all { margin-top: 20px; opacity: 0; animation: fadeUp 0.4s ease 0.2s forwards; }
+
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0;
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--accent-deep);
+    cursor: pointer;
+    margin-bottom: 12px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .detail-delete {
+    padding: 10px 20px;
+    border: 1.5px solid #E8D2D2;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: #C27070;
+    cursor: pointer;
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .detail-delete:active { background: #FDF5F5; }
+
+  /* Floating history button */
+  .nav-history {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    box-shadow: 0 4px 16px rgba(44, 36, 22, 0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+    font-size: 20px;
+  }
+  .nav-history:active { transform: scale(0.92); }
+  .nav-history .badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-warm);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 10px 20px;
+    background: var(--text-primary);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ===== IMAGE EXPORT CARD (offscreen render) ===== */
+  .export-card-container {
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    z-index: -1;
+  }
+
+  .export-card {
+    width: 420px;
+    background: linear-gradient(170deg, #FBF8F4 0%, #F5F0E8 40%, #EDE4D6 100%);
+    padding: 40px 32px 36px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: #2C2416;
+  }
+
+  .ec-header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E8E2D8;
+  }
+  .ec-logo { font-size: 20px; margin-bottom: 6px; }
+  .ec-app-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #7A6F60;
+    letter-spacing: 2px;
+  }
+
+  .ec-book-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .ec-meta {
+    text-align: center;
+    font-size: 12px;
+    color: #A89E8E;
+    margin-bottom: 16px;
+  }
+  .ec-emotions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .ec-emotion-tag {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    background: rgba(212, 149, 106, 0.12);
+    color: #B8734A;
+    font-weight: 500;
+  }
+
+  .ec-divider {
+    width: 40px;
+    height: 2px;
+    background: #E8C9A0;
+    margin: 0 auto 24px;
+    border-radius: 1px;
+  }
+
+  .ec-qa { margin-bottom: 20px; }
+  .ec-qa:last-child { margin-bottom: 0; }
+  .ec-question {
+    font-size: 12px;
+    color: #A89E8E;
+    font-weight: 500;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+  .ec-answer {
+    font-size: 14px;
+    color: #2C2416;
+    line-height: 1.8;
+  }
+
+  .ec-footer {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid #E8E2D8;
+    text-align: center;
+    font-size: 11px;
+    color: #C4B9A8;
+    letter-spacing: 1px;
+  }
+
+  /* Image preview modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-content {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 20px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    text-align: center;
+    animation: popIn 0.3s ease;
+  }
+  .modal-content img {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .modal-hint {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-actions button { flex: 1; }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    70% { transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .fade-enter { animation: fadeUp 0.4s ease forwards; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .date-display {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.05s forwards;
+  }
+
+  /* Loading spinner for export */
+  .btn-loading {
+    pointer-events: none;
+    opacity: 0.7 !important;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header">
+    <div class="header-icon">📖</div>
+    <h1>读一点，写一点</h1>
+    <p>记录你此刻的阅读感受</p>
+  </div>
+  <div class="date-display" id="dateDisplay"></div>
+
+  <!-- SCREEN 1: Book Info + Emotion -->
+  <div class="screen active" id="screen1">
+    <div class="book-info-card">
+      <div class="input-group">
+        <label class="input-label">📚 书名</label>
+        <input class="text-input" type="text" id="bookTitle" placeholder="你在读什么？">
+      </div>
+      <div class="input-group">
+        <label class="input-label">📄 今天看到哪了？</label>
+        <input class="text-input" type="text" id="readingProgress" placeholder="比如：第3-6章 / 前50页 / 看了1/5">
+      </div>
+      <div class="input-group">
+        <label class="input-label">⏱️ 大概看了多久？</label>
+        <input class="text-input" type="text" id="readingTime" placeholder="比如：30分钟 / 1小时">
+      </div>
+    </div>
+    <div class="emotion-section">
+      <div class="emotion-title">此刻的感受是？</div>
+      <div class="emotion-subtitle">可以选择 1-2 个最贴近的感受</div>
+      <div class="emotion-grid" id="emotionGrid">
+        <button class="emotion-btn" data-emotion="moved" onclick="toggleEmotion(this)">
+          <span class="emoji">💕</span><span class="label">感动/共鸣</span>
+        </button>
+        <button class="emotion-btn" data-emotion="inspired" onclick="toggleEmotion(this)">
+          <span class="emoji">💡</span><span class="label">启发/顿悟</span>
+        </button>
+        <button class="emotion-btn" data-emotion="healed" onclick="toggleEmotion(this)">
+          <span class="emoji">🌿</span><span class="label">治愈/平静</span>
+        </button>
+        <button class="emotion-btn" data-emotion="heavy" onclick="toggleEmotion(this)">
+          <span class="emoji">🌊</span><span class="label">沉重/压抑</span>
+        </button>
+        <button class="emotion-btn" data-emotion="curious" onclick="toggleEmotion(this)">
+          <span class="emoji">🔍</span><span class="label">好奇/想探索</span>
+        </button>
+        <button class="emotion-btn" data-emotion="confused" onclick="toggleEmotion(this)">
+          <span class="emoji">🌀</span><span class="label">困惑/复杂</span>
+        </button>
+      </div>
+      <div class="multi-hint" id="multiHint">已选 <span id="selectedCount">0</span> 个，最多选 2 个</div>
+    </div>
+    <button class="btn-primary" id="startBtn" disabled onclick="goToQuestions()">开始记录感受 ✍️</button>
+  </div>
+
+  <!-- SCREEN 2: Questions -->
+  <div class="screen" id="screen2">
+    <div class="question-flow" id="questionFlow"></div>
+  </div>
+
+  <!-- SCREEN 3: Complete -->
+  <div class="screen" id="screen3">
+    <div class="complete-screen">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-title">今天的阅读感受，已收藏</div>
+      <div class="complete-subtitle">每一次记录都是和书的一次对话<br>下次看完几章再来写一点吧</div>
+      <div class="summary-card" id="summaryCard"></div>
+      <div class="complete-actions">
+        <button class="btn-export" id="btnExportImg" onclick="exportCurrentAsImage()">保存为图片 🖼️</button>
+        <button class="btn-export-outline" onclick="exportCurrentAsMd()">导出文字 📄</button>
+      </div>
+      <button class="btn-restart" onclick="restart()">再记录一次 📖</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: History -->
+  <div class="screen" id="screen4">
+    <div id="historyContent"></div>
+  </div>
+</div>
+
+<!-- Floating history button -->
+<div class="nav-history" id="navHistory" onclick="goToHistory()">
+  📚
+  <span class="badge" id="historyBadge" style="display:none;">0</span>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Offscreen export card for image generation -->
+<div class="export-card-container" id="exportCardContainer"></div>
+
+<!-- Image preview modal -->
+<div class="modal-overlay" id="imageModal">
+  <div class="modal-content">
+    <img id="modalImage" src="" alt="阅读记录">
+    <div class="modal-hint">📱 长按图片可保存到手机相册</div>
+    <div class="modal-actions">
+      <button class="btn-export-outline" onclick="closeModal()">关闭</button>
+      <button class="btn-export" onclick="downloadCurrentImage()">下载图片 ⬇️</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const EMOTIONS = {
+  moved: { emoji: '💕', label: '感动/共鸣' },
+  inspired: { emoji: '💡', label: '启发/顿悟' },
+  healed: { emoji: '🌿', label: '治愈/平静' },
+  heavy: { emoji: '🌊', label: '沉重/压抑' },
+  curious: { emoji: '🔍', label: '好奇/想探索' },
+  confused: { emoji: '🌀', label: '困惑/复杂' }
+};
+
+const QUESTION_POOLS = {
+  moved: {
+    core: [
+      { emoji: '🫀', text: '这段内容触碰到了你的哪个柔软的地方？', hint: '不用分析，就说说是什么地方让你有了感觉', placeholder: '读到……的时候，我觉得……' },
+      { emoji: '💧', text: '如果要用一个画面来形容你刚才的感受，那会是什么样的画面？', hint: '可以是书里的场景，也可以是你脑海中浮现的画面', placeholder: '我脑海里出现的画面是……' },
+      { emoji: '🪞', text: '这段内容像一面镜子，你在里面看到了什么？', hint: '可能是自己的某段经历，或某个人的影子', placeholder: '我好像看到了……' }
+    ],
+    expand: [
+      { emoji: '🌙', text: '有没有哪句话或哪个细节，你觉得以后还会想起来？', hint: '不一定是最重要的，可能就是莫名印象深刻的', placeholder: '我觉得我会记住……' },
+      { emoji: '✉️', text: '如果可以对书里的某个角色说一句话，你想说什么？', hint: '什么都可以，安慰、鼓励、或者只是"我懂你"', placeholder: '我想对TA说……' },
+      { emoji: '🫧', text: '读完这一段，你的心情和读之前有什么不同？', hint: '哪怕只是微妙的变化也值得记录', placeholder: '读之前我……，读完后我……' }
+    ]
+  },
+  inspired: {
+    core: [
+      { emoji: '💡', text: '什么内容让你突然有了"原来如此"的感觉？', hint: '可以是一个观点、一种思考方式、或一个你没想到的角度', placeholder: '让我有启发的是……' },
+      { emoji: '🔑', text: '如果要把今天读到的精华浓缩成一句话给朋友，你会怎么说？', hint: '用你自己的话来说', placeholder: '我会说……' },
+      { emoji: '🧩', text: '这段内容和你之前知道的东西产生了什么新的连接？', hint: '可能接上了某个你一直在想的问题', placeholder: '我发现它和……有关联' }
+    ],
+    expand: [
+      { emoji: '🌱', text: '这个启发会让你想要做什么改变吗？哪怕很小的也算', hint: '不用想太大，一个小小的行动想法就很好', placeholder: '我想试试……' },
+      { emoji: '❓', text: '读完这段，你冒出了什么新的问题或好奇？', hint: '有时候好的阅读不是给答案，而是打开新的问题', placeholder: '我现在很好奇……' }
+    ]
+  },
+  healed: {
+    core: [
+      { emoji: '🌿', text: '这段内容给了你怎样的安慰或宁静感？', hint: '不用解释为什么，描述那个感觉就好', placeholder: '读的时候我感觉……' },
+      { emoji: '☁️', text: '如果这段阅读是一种天气，它是什么样的天气？', hint: '晴天、小雨、微风、雪后初晴……感觉是什么就是什么', placeholder: '像是……' },
+      { emoji: '🫶', text: '这段文字里有没有哪句让你想深呼吸一下的？', hint: '那种读到会"嗯…"的感觉', placeholder: '让我心静下来的是……' }
+    ],
+    expand: [
+      { emoji: '🕊️', text: '你觉得书里的什么让你感到被温柔对待了？', hint: '可能是一个角色的行为，也可能是作者的写法', placeholder: '我觉得温柔的地方是……' },
+      { emoji: '🛋️', text: '读完后你想做什么？发呆、喝杯茶、还是继续待在这个故事里？', hint: '阅读后的余韵也很值得记住', placeholder: '读完后我想……' }
+    ]
+  },
+  heavy: {
+    core: [
+      { emoji: '🌊', text: '是什么让你觉得沉重？', hint: '可以只是描述那个感觉，不用分析原因', placeholder: '让我觉得沉重的是……' },
+      { emoji: '🪨', text: '这种沉重感，像是压在你身体的哪个部位？', hint: '有时候情绪是有身体感觉的，比如胸口、肩膀、眼眶', placeholder: '感觉像是……' },
+      { emoji: '🌑', text: '如果要给这段阅读选一个颜色，你会选什么色？', hint: '直觉选就好', placeholder: '我觉得是……色' }
+    ],
+    expand: [
+      { emoji: '🕯️', text: '在这份沉重里，有没有一点点微光让你觉得还好？', hint: '也许有，也许没有，都可以', placeholder: '如果有的话，那是……' },
+      { emoji: '💬', text: '你想跟谁聊聊你刚才读到的东西？', hint: '有时候沉重需要分享出去才会轻一点', placeholder: '我想跟……聊聊' }
+    ]
+  },
+  curious: {
+    core: [
+      { emoji: '🔍', text: '你最好奇或最想知道后面会发生什么的是哪个部分？', hint: '可能是一个悬念、一个角色的走向、或一个还没揭开的谜', placeholder: '我最好奇的是……' },
+      { emoji: '🗺️', text: '读到现在，你对这个故事/这本书最大的期待是什么？', hint: '你希望接下来看到什么', placeholder: '我期待……' },
+      { emoji: '🧲', text: '是什么在吸引你继续读下去？', hint: '故事？人物？写法？还是某种说不清的感觉？', placeholder: '吸引我的是……' }
+    ],
+    expand: [
+      { emoji: '📌', text: '你有没有在看的时候产生过什么自己的猜测？', hint: '猜测后面会发生什么，或者某个伏笔是什么意思', placeholder: '我猜……' },
+      { emoji: '🌏', text: '这本书让你对现实中的什么事情产生了新的好奇？', hint: '也许看完之后你想去了解某个话题', placeholder: '我想去了解……' }
+    ]
+  },
+  confused: {
+    core: [
+      { emoji: '🌀', text: '你觉得复杂或困惑的点是什么？', hint: '看不懂、矛盾的感觉、或者说不清为什么，都算', placeholder: '让我困惑的是……' },
+      { emoji: '🎭', text: '你对书中的某个角色或情节有没有"又理解又不理解"的感觉？', hint: '那种纠结的、矛盾的感受反而说明你在深入思考', placeholder: '我对……的感觉很矛盾，因为……' },
+      { emoji: '🔮', text: '你觉得作者想表达什么？你自己的理解是什么？', hint: '没有标准答案，你的理解就是最好的理解', placeholder: '我觉得作者可能想说……' }
+    ],
+    expand: [
+      { emoji: '🧶', text: '虽然现在看不太明白，但你觉得继续看下去会懂吗？', hint: '有时候困惑是一种邀请，邀请你继续往下看', placeholder: '我觉得……' },
+      { emoji: '💭', text: '这个困惑让你想到了生活中的什么吗？', hint: '有时候我们被书困惑，是因为它撞上了我们自己的困惑', placeholder: '它让我想到……' }
+    ]
+  }
+};
+
+// ===== STATE =====
+let selectedEmotions = [];
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let answers = {};
+let isExpanded = false;
+let allRecords = JSON.parse(localStorage.getItem('readingJournal') || '[]');
+let currentExportImageUrl = null;
+
+updateHistoryBadge();
+
+// ===== DATE =====
+function showDate() {
+  const now = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+  document.getElementById('dateDisplay').textContent = now.toLocaleDateString('zh-CN', options);
+}
+showDate();
+
+// ===== EMOTION SELECTION =====
+function toggleEmotion(btn) {
+  const emotion = btn.dataset.emotion;
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    selectedEmotions = selectedEmotions.filter(e => e !== emotion);
+  } else {
+    if (selectedEmotions.length >= 2) {
+      const firstSelected = document.querySelector(`.emotion-btn[data-emotion="${selectedEmotions[0]}"]`);
+      firstSelected.classList.remove('selected');
+      selectedEmotions.shift();
+    }
+    btn.classList.add('selected');
+    selectedEmotions.push(emotion);
+  }
+  const hint = document.getElementById('multiHint');
+  document.getElementById('selectedCount').textContent = selectedEmotions.length;
+  hint.classList.toggle('visible', selectedEmotions.length > 0);
+  updateStartBtn();
+}
+
+function updateStartBtn() {
+  const title = document.getElementById('bookTitle').value.trim();
+  document.getElementById('startBtn').disabled = !(title && selectedEmotions.length > 0);
+}
+document.getElementById('bookTitle').addEventListener('input', updateStartBtn);
+
+// ===== GENERATE QUESTIONS =====
+function generateQuestions() {
+  const questions = [];
+  selectedEmotions.forEach(emotion => {
+    const pool = QUESTION_POOLS[emotion];
+    const coreIdx = Math.floor(Math.random() * pool.core.length);
+    questions.push({ ...pool.core[coreIdx], type: 'core', emotion });
+  });
+  const expandPool = [];
+  selectedEmotions.forEach(emotion => {
+    QUESTION_POOLS[emotion].expand.forEach(q => expandPool.push({ ...q, type: 'expand', emotion }));
+  });
+  const expandQuestions = expandPool.sort(() => Math.random() - 0.5).slice(0, Math.min(3, expandPool.length));
+  return { core: questions, expand: expandQuestions };
+}
+
+// ===== QUESTION FLOW =====
+function goToQuestions() {
+  const generated = generateQuestions();
+  currentQuestions = generated.core;
+  window._expandQuestions = generated.expand;
+  currentQuestionIndex = 0;
+  answers = {};
+  isExpanded = false;
+  switchScreen('screen2');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const flow = document.getElementById('questionFlow');
+  const q = currentQuestions[currentQuestionIndex];
+  const isLast = currentQuestionIndex === currentQuestions.length - 1;
+  const savedAnswer = answers[currentQuestionIndex] || '';
+
+  let dotsHtml = '';
+  for (let i = 0; i < currentQuestions.length; i++) {
+    const cls = i < currentQuestionIndex ? 'done' : (i === currentQuestionIndex ? 'current' : '');
+    dotsHtml += `<div class="progress-dot ${cls}"></div>`;
+  }
+
+  flow.innerHTML = `
+    <div class="question-progress fade-enter">
+      <div class="progress-dots">${dotsHtml}</div>
+      <div class="progress-text">${currentQuestionIndex + 1} / ${currentQuestions.length}</div>
+    </div>
+    <div class="question-card">
+      <div class="question-emoji">${q.emoji}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="question-hint">${q.hint}</div>
+      <textarea class="answer-textarea" id="answerInput" placeholder="${q.placeholder || '写下你的想法……'}" oninput="autoGrow(this)">${savedAnswer}</textarea>
+      <div class="question-actions">
+        ${currentQuestionIndex > 0 ? '<button class="btn-secondary" onclick="prevQuestion()">上一个</button>' : '<button class="btn-secondary" onclick="skipQuestion()">跳过</button>'}
+        <button class="btn-next" onclick="${isLast ? (isExpanded ? 'finish()' : 'showExpandOption()') : 'nextQuestion()'}">
+          ${isLast ? (isExpanded ? '完成记录 ✨' : '下一步') : '下一个 →'}
+        </button>
+      </div>
+    </div>
+    ${isLast && !isExpanded ? `<div class="expand-section"><button class="expand-btn" onclick="showExpandOption()">还想多写几个？ ↓</button></div>` : ''}
+    ${isLast ? `<div style="text-align:center;margin-top:4px;opacity:0;animation:fadeUp 0.5s ease 0.3s forwards;"><button class="btn-secondary" style="display:inline-block;width:auto;padding:10px 24px;font-size:13px;" onclick="finish()">就写到这里 ✓</button></div>` : ''}
+  `;
+  setTimeout(() => {
+    const textarea = document.getElementById('answerInput');
+    if (textarea) { textarea.focus(); autoGrow(textarea); }
+  }, 100);
+}
+
+function autoGrow(el) { el.style.height = 'auto'; el.style.height = Math.max(120, el.scrollHeight) + 'px'; }
+function saveCurrentAnswer() { const t = document.getElementById('answerInput'); if (t) answers[currentQuestionIndex] = t.value; }
+function nextQuestion() { saveCurrentAnswer(); if (currentQuestionIndex < currentQuestions.length - 1) { currentQuestionIndex++; renderQuestion(); } }
+function prevQuestion() { saveCurrentAnswer(); if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); } }
+function skipQuestion() { answers[currentQuestionIndex] = ''; if (currentQuestionIndex < currentQuestions.length - 1) { currentQuestionIndex++; renderQuestion(); } }
+
+function showExpandOption() {
+  saveCurrentAnswer();
+  if (window._expandQuestions && window._expandQuestions.length > 0) {
+    currentQuestions = [...currentQuestions, ...window._expandQuestions];
+    window._expandQuestions = [];
+    isExpanded = true;
+    currentQuestionIndex++;
+    renderQuestion();
+  } else {
+    finish();
+  }
+}
+
+// ===== FINISH & SAVE =====
+function finish() {
+  saveCurrentAnswer();
+  const record = buildRecord();
+  allRecords.unshift(record);
+  saveRecords();
+  updateHistoryBadge();
+  switchScreen('screen3');
+  renderSummary();
+}
+
+function buildRecord() {
+  const now = new Date();
+  const qa = [];
+  currentQuestions.forEach((q, i) => {
+    const answer = answers[i];
+    if (answer && answer.trim()) qa.push({ emoji: q.emoji, question: q.text, answer: answer.trim() });
+  });
+  return {
+    id: Date.now().toString(),
+    date: now.toISOString(),
+    bookTitle: document.getElementById('bookTitle').value,
+    progress: document.getElementById('readingProgress').value,
+    readingTime: document.getElementById('readingTime').value,
+    emotions: selectedEmotions.map(e => ({ key: e, ...EMOTIONS[e] })),
+    qa
+  };
+}
+
+function saveRecords() { localStorage.setItem('readingJournal', JSON.stringify(allRecords)); }
+
+function updateHistoryBadge() {
+  const badge = document.getElementById('historyBadge');
+  if (allRecords.length > 0) { badge.style.display = 'flex'; badge.textContent = allRecords.length > 99 ? '99+' : allRecords.length; }
+  else { badge.style.display = 'none'; }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ===== RENDER SUMMARY =====
+function renderSummary() {
+  const card = document.getElementById('summaryCard');
+  const r = allRecords[0];
+  card.innerHTML = buildSummaryHtml(r);
+}
+
+function buildSummaryHtml(r) {
+  const d = new Date(r.date);
+  const dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  const emotionTags = r.emotions.map(e => `<span class="summary-emotion-tag">${e.emoji} ${e.label}</span>`).join('');
+  let qaHtml = '';
+  r.qa.forEach(item => {
+    qaHtml += `<div class="summary-qa"><div class="summary-q">${item.emoji} ${item.question}</div><div class="summary-a">${item.answer}</div></div>`;
+  });
+  const metaParts = [];
+  if (r.progress) metaParts.push(r.progress);
+  if (r.readingTime) metaParts.push('阅读 ' + r.readingTime);
+  metaParts.push(dateStr);
+  return `
+    <div class="summary-header"><div><div class="summary-book-title">📚 ${r.bookTitle}</div><div class="summary-meta">${metaParts.join(' · ')}</div></div></div>
+    <div class="summary-emotion-tags">${emotionTags}</div>
+    ${qaHtml || '<div class="summary-a" style="color:var(--text-light);">这次没有写感受，但翻开书本身就很棒 ✨</div>'}
+  `;
+}
+
+// ===== NAVIGATION =====
+function switchScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById('navHistory').style.display = screenId === 'screen4' ? 'none' : 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  selectedEmotions = [];
+  currentQuestions = [];
+  currentQuestionIndex = 0;
+  answers = {};
+  isExpanded = false;
+  document.getElementById('bookTitle').value = '';
+  document.getElementById('readingProgress').value = '';
+  document.getElementById('readingTime').value = '';
+  document.querySelectorAll('.emotion-btn').forEach(btn => btn.classList.remove('selected'));
+  document.getElementById('multiHint').classList.remove('visible');
+  document.getElementById('startBtn').disabled = true;
+  switchScreen('screen1');
+}
+
+// ===== IMAGE EXPORT =====
+function buildExportCard(r) {
+  const d = new Date(r.date);
+  const dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  const emotionTags = r.emotions.map(e => `<span class="ec-emotion-tag">${e.emoji} ${e.label}</span>`).join('');
+  const metaParts = [];
+  if (r.progress) metaParts.push(r.progress);
+  if (r.readingTime) metaParts.push('阅读 ' + r.readingTime);
+  metaParts.push(dateStr);
+
+  let qaHtml = '';
+  r.qa.forEach(item => {
+    qaHtml += `<div class="ec-qa"><div class="ec-question">${item.emoji} ${item.question}</div><div class="ec-answer">${item.answer}</div></div>`;
+  });
+
+  return `
+    <div class="export-card" id="exportCard">
+      <div class="ec-header">
+        <div class="ec-logo">📖</div>
+        <div class="ec-app-name">读一点，写一点</div>
+      </div>
+      <div class="ec-book-title">📚 ${r.bookTitle}</div>
+      <div class="ec-meta">${metaParts.join(' · ')}</div>
+      <div class="ec-emotions">${emotionTags}</div>
+      <div class="ec-divider"></div>
+      ${qaHtml || '<div class="ec-answer" style="text-align:center;color:#A89E8E;">翻开书本身就很棒 ✨</div>'}
+      <div class="ec-footer">— 记录于「读一点，写一点」—</div>
+    </div>
+  `;
+}
+
+async function generateImage(r) {
+  const container = document.getElementById('exportCardContainer');
+  container.innerHTML = buildExportCard(r);
+  
+  // Wait for fonts to render
+  await new Promise(resolve => setTimeout(resolve, 300));
+  
+  const card = document.getElementById('exportCard');
+  const canvas = await html2canvas(card, {
+    scale: 2,
+    backgroundColor: null,
+    useCORS: true,
+    logging: false,
+    width: 420,
+    windowWidth: 420
+  });
+
+  container.innerHTML = '';
+  return canvas.toDataURL('image/png');
+}
+
+async function exportCurrentAsImage() {
+  if (allRecords.length === 0) return;
+  const btn = document.getElementById('btnExportImg');
+  btn.classList.add('btn-loading');
+  btn.textContent = '生成中…';
+  
+  try {
+    const url = await generateImage(allRecords[0]);
+    currentExportImageUrl = url;
+    showImageModal(url);
+  } catch (e) {
+    showToast('图片生成失败，请重试');
+    console.error(e);
+  }
+  
+  btn.classList.remove('btn-loading');
+  btn.textContent = '保存为图片 🖼️';
+}
+
+async function exportSingleAsImage(id) {
+  const r = allRecords.find(rec => rec.id === id);
+  if (!r) return;
+  showToast('生成图片中…');
+  
+  try {
+    const url = await generateImage(r);
+    currentExportImageUrl = url;
+    showImageModal(url);
+  } catch (e) {
+    showToast('图片生成失败，请重试');
+    console.error(e);
+  }
+}
+
+function showImageModal(url) {
+  document.getElementById('modalImage').src = url;
+  document.getElementById('imageModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('imageModal').classList.remove('show');
+}
+
+function downloadCurrentImage() {
+  if (!currentExportImageUrl) return;
+  const a = document.createElement('a');
+  a.href = currentExportImageUrl;
+  a.download = '阅读记录_' + new Date().getTime() + '.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('图片已下载 ✓');
+}
+
+// Close modal on overlay click
+document.getElementById('imageModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== MARKDOWN EXPORT =====
+function recordToMarkdown(r) {
+  const d = new Date(r.date);
+  const dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+  const emotions = r.emotions.map(e => `${e.emoji} ${e.label}`).join('、');
+  let md = `## 📚 ${r.bookTitle}\n\n`;
+  md += `**日期**：${dateStr}\n`;
+  if (r.progress) md += `**进度**：${r.progress}\n`;
+  if (r.readingTime) md += `**阅读时长**：${r.readingTime}\n`;
+  md += `**感受**：${emotions}\n\n`;
+  r.qa.forEach(item => { md += `### ${item.emoji} ${item.question}\n\n${item.answer}\n\n`; });
+  md += `---\n\n`;
+  return md;
+}
+
+function downloadMarkdown(filename, content) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('已导出 ✓');
+}
+
+function exportCurrentAsMd() {
+  if (allRecords.length === 0) return;
+  const r = allRecords[0];
+  const content = `# 读一点，写一点 - 阅读感受记录\n\n` + recordToMarkdown(r);
+  const safeTitle = r.bookTitle.replace(/[^\w\u4e00-\u9fff]/g, '_').substring(0, 20);
+  downloadMarkdown(`阅读记录_${safeTitle}.md`, content);
+}
+
+function exportSingleAsMd(id) {
+  const r = allRecords.find(rec => rec.id === id);
+  if (!r) return;
+  const content = `# 读一点，写一点 - 阅读感受记录\n\n` + recordToMarkdown(r);
+  const safeTitle = r.bookTitle.replace(/[^\w\u4e00-\u9fff]/g, '_').substring(0, 20);
+  downloadMarkdown(`阅读记录_${safeTitle}.md`, content);
+}
+
+function exportAllAsMd() {
+  if (allRecords.length === 0) return;
+  let content = `# 读一点，写一点 - 全部阅读记录\n\n共 ${allRecords.length} 条记录\n\n---\n\n`;
+  allRecords.forEach(r => { content += recordToMarkdown(r); });
+  const d = new Date();
+  downloadMarkdown(`全部阅读记录_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.md`, content);
+}
+
+// ===== HISTORY =====
+function goToHistory() {
+  switchScreen('screen4');
+  renderHistoryList();
+}
+
+function renderHistoryList() {
+  const content = document.getElementById('historyContent');
+  if (allRecords.length === 0) {
+    content.innerHTML = `
+      <div class="history-header"><h2>📚 阅读记录</h2><button class="history-back" onclick="backFromHistory()">返回</button></div>
+      <div class="history-empty"><div class="history-empty-icon">📝</div>还没有任何记录<br>去读一点、写一点吧</div>
+    `;
+    return;
+  }
+
+  const books = {};
+  allRecords.forEach(r => { if (!books[r.bookTitle]) books[r.bookTitle] = []; books[r.bookTitle].push(r); });
+
+  let listHtml = '';
+  allRecords.forEach((r, idx) => {
+    const d = new Date(r.date);
+    const dateStr = `${d.getMonth() + 1}月${d.getDate()}日`;
+    const emotionStr = r.emotions.map(e => `<span class="history-entry-emotion">${e.emoji} ${e.label}</span>`).join('');
+    const preview = r.qa.length > 0 ? r.qa[0].answer : '没有写感受';
+    listHtml += `
+      <div class="history-entry" style="animation-delay:${idx * 0.05}s" onclick="viewRecord('${r.id}')">
+        <div class="history-entry-header"><div class="history-entry-title">${r.bookTitle}</div><div class="history-entry-date">${dateStr}</div></div>
+        <div class="history-entry-emotions">${emotionStr}</div>
+        <div class="history-entry-preview">${preview}</div>
+      </div>
+    `;
+  });
+
+  content.innerHTML = `
+    <div class="history-header"><h2>📚 阅读记录</h2><button class="history-back" onclick="backFromHistory()">返回</button></div>
+    <div class="history-stats">
+      <div class="stat-card"><div class="stat-number">${allRecords.length}</div><div class="stat-label">次记录</div></div>
+      <div class="stat-card"><div class="stat-number">${Object.keys(books).length}</div><div class="stat-label">本书</div></div>
+    </div>
+    <div class="history-list">${listHtml}</div>
+    <div class="history-export-all">
+      <button class="btn-export" style="width:100%;opacity:1;animation:none;" onclick="exportAllAsMd()">导出全部记录 📄</button>
+    </div>
+  `;
+}
+
+function viewRecord(id) {
+  const r = allRecords.find(rec => rec.id === id);
+  if (!r) return;
+  const content = document.getElementById('historyContent');
+  content.innerHTML = `
+    <button class="detail-back" onclick="renderHistoryList()">← 返回列表</button>
+    <div class="summary-card fade-enter" style="opacity:1;">${buildSummaryHtml(r)}</div>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button class="btn-export" style="flex:1;opacity:1;animation:none;" onclick="exportSingleAsImage('${r.id}')">保存图片 🖼️</button>
+      <button class="btn-export-outline" style="flex:1;" onclick="exportSingleAsMd('${r.id}')">导出文字 📄</button>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <button class="detail-delete" onclick="deleteRecord('${r.id}')">删除此记录</button>
+    </div>
+  `;
+}
+
+function deleteRecord(id) {
+  if (!confirm('确定要删除这条记录吗？')) return;
+  allRecords = allRecords.filter(r => r.id !== id);
+  saveRecords();
+  updateHistoryBadge();
+  showToast('已删除');
+  renderHistoryList();
+}
+
+function backFromHistory() { switchScreen('screen1'); }
+</script>
+
+</body>
+</html>
