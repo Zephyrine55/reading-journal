@@ -777,7 +777,7 @@
   <div class="header">
     <div class="header-icon">📖</div>
     <h1>读一点，写一点</h1>
-    <p>记录你此刻的阅读感受</p>
+    <p>记录妳此刻的阅读感受</p>
   </div>
   <div class="date-display" id="dateDisplay"></div>
 
@@ -786,7 +786,7 @@
     <div class="book-info-card">
       <div class="input-group">
         <label class="input-label">📚 书名</label>
-        <input class="text-input" type="text" id="bookTitle" placeholder="你在读什么？">
+        <input class="text-input" type="text" id="bookTitle" placeholder="妳在读什么？">
       </div>
       <div class="input-group">
         <label class="input-label">📄 今天看到哪了？</label>
@@ -889,69 +889,69 @@ const EMOTIONS = {
 const QUESTION_POOLS = {
   moved: {
     core: [
-      { emoji: '🫀', text: '这段内容触碰到了你的哪个柔软的地方？', hint: '不用分析，就说说是什么地方让你有了感觉', placeholder: '读到……的时候，我觉得……' },
-      { emoji: '💧', text: '如果要用一个画面来形容你刚才的感受，那会是什么样的画面？', hint: '可以是书里的场景，也可以是你脑海中浮现的画面', placeholder: '我脑海里出现的画面是……' },
-      { emoji: '🪞', text: '这段内容像一面镜子，你在里面看到了什么？', hint: '可能是自己的某段经历，或某个人的影子', placeholder: '我好像看到了……' }
+      { emoji: '🫀', text: '这段内容触碰到了妳的哪个柔软的地方？', hint: '不用分析，就说说是什么地方让妳有了感觉', placeholder: '读到……的时候，我觉得……' },
+      { emoji: '💧', text: '如果要用一个画面来形容妳刚才的感受，那会是什么样的画面？', hint: '可以是书里的场景，也可以是妳脑海中浮现的画面', placeholder: '我脑海里出现的画面是……' },
+      { emoji: '🪞', text: '这段内容像一面镜子，妳在里面看到了什么？', hint: '可能是自己的某段经历，或某个人的影子', placeholder: '我好像看到了……' }
     ],
     expand: [
-      { emoji: '🌙', text: '有没有哪句话或哪个细节，你觉得以后还会想起来？', hint: '不一定是最重要的，可能就是莫名印象深刻的', placeholder: '我觉得我会记住……' },
-      { emoji: '✉️', text: '如果可以对书里的某个角色说一句话，你想说什么？', hint: '什么都可以，安慰、鼓励、或者只是"我懂你"', placeholder: '我想对TA说……' },
-      { emoji: '🫧', text: '读完这一段，你的心情和读之前有什么不同？', hint: '哪怕只是微妙的变化也值得记录', placeholder: '读之前我……，读完后我……' }
+      { emoji: '🌙', text: '有没有哪句话或哪个细节，妳觉得以后还会想起来？', hint: '不一定是最重要的，可能就是莫名印象深刻的', placeholder: '我觉得我会记住……' },
+      { emoji: '✉️', text: '如果可以对书里的某个角色说一句话，妳想说什么？', hint: '什么都可以，安慰、鼓励、或者只是"我懂妳"', placeholder: '我想对TA说……' },
+      { emoji: '🫧', text: '读完这一段，妳的心情和读之前有什么不同？', hint: '哪怕只是微妙的变化也值得记录', placeholder: '读之前我……，读完后我……' }
     ]
   },
   inspired: {
     core: [
-      { emoji: '💡', text: '什么内容让你突然有了"原来如此"的感觉？', hint: '可以是一个观点、一种思考方式、或一个你没想到的角度', placeholder: '让我有启发的是……' },
-      { emoji: '🔑', text: '如果要把今天读到的精华浓缩成一句话给朋友，你会怎么说？', hint: '用你自己的话来说', placeholder: '我会说……' },
-      { emoji: '🧩', text: '这段内容和你之前知道的东西产生了什么新的连接？', hint: '可能接上了某个你一直在想的问题', placeholder: '我发现它和……有关联' }
+      { emoji: '💡', text: '什么内容让妳突然有了"原来如此"的感觉？', hint: '可以是一个观点、一种思考方式、或一个妳没想到的角度', placeholder: '让我有启发的是……' },
+      { emoji: '🔑', text: '如果要把今天读到的精华浓缩成一句话给朋友，妳会怎么说？', hint: '用妳自己的话来说', placeholder: '我会说……' },
+      { emoji: '🧩', text: '这段内容和妳之前知道的东西产生了什么新的连接？', hint: '可能接上了某个妳一直在想的问题', placeholder: '我发现它和……有关联' }
     ],
     expand: [
-      { emoji: '🌱', text: '这个启发会让你想要做什么改变吗？哪怕很小的也算', hint: '不用想太大，一个小小的行动想法就很好', placeholder: '我想试试……' },
-      { emoji: '❓', text: '读完这段，你冒出了什么新的问题或好奇？', hint: '有时候好的阅读不是给答案，而是打开新的问题', placeholder: '我现在很好奇……' }
+      { emoji: '🌱', text: '这个启发会让妳想要做什么改变吗？哪怕很小的也算', hint: '不用想太大，一个小小的行动想法就很好', placeholder: '我想试试……' },
+      { emoji: '❓', text: '读完这段，妳冒出了什么新的问题或好奇？', hint: '有时候好的阅读不是给答案，而是打开新的问题', placeholder: '我现在很好奇……' }
     ]
   },
   healed: {
     core: [
-      { emoji: '🌿', text: '这段内容给了你怎样的安慰或宁静感？', hint: '不用解释为什么，描述那个感觉就好', placeholder: '读的时候我感觉……' },
+      { emoji: '🌿', text: '这段内容给了妳怎样的安慰或宁静感？', hint: '不用解释为什么，描述那个感觉就好', placeholder: '读的时候我感觉……' },
       { emoji: '☁️', text: '如果这段阅读是一种天气，它是什么样的天气？', hint: '晴天、小雨、微风、雪后初晴……感觉是什么就是什么', placeholder: '像是……' },
-      { emoji: '🫶', text: '这段文字里有没有哪句让你想深呼吸一下的？', hint: '那种读到会"嗯…"的感觉', placeholder: '让我心静下来的是……' }
+      { emoji: '🫶', text: '这段文字里有没有哪句让妳想深呼吸一下的？', hint: '那种读到会"嗯…"的感觉', placeholder: '让我心静下来的是……' }
     ],
     expand: [
-      { emoji: '🕊️', text: '你觉得书里的什么让你感到被温柔对待了？', hint: '可能是一个角色的行为，也可能是作者的写法', placeholder: '我觉得温柔的地方是……' },
-      { emoji: '🛋️', text: '读完后你想做什么？发呆、喝杯茶、还是继续待在这个故事里？', hint: '阅读后的余韵也很值得记住', placeholder: '读完后我想……' }
+      { emoji: '🕊️', text: '妳觉得书里的什么让妳感到被温柔对待了？', hint: '可能是一个角色的行为，也可能是作者的写法', placeholder: '我觉得温柔的地方是……' },
+      { emoji: '🛋️', text: '读完后妳想做什么？发呆、喝杯茶、还是继续待在这个故事里？', hint: '阅读后的余韵也很值得记住', placeholder: '读完后我想……' }
     ]
   },
   heavy: {
     core: [
-      { emoji: '🌊', text: '是什么让你觉得沉重？', hint: '可以只是描述那个感觉，不用分析原因', placeholder: '让我觉得沉重的是……' },
-      { emoji: '🪨', text: '这种沉重感，像是压在你身体的哪个部位？', hint: '有时候情绪是有身体感觉的，比如胸口、肩膀、眼眶', placeholder: '感觉像是……' },
-      { emoji: '🌑', text: '如果要给这段阅读选一个颜色，你会选什么色？', hint: '直觉选就好', placeholder: '我觉得是……色' }
+      { emoji: '🌊', text: '是什么让妳觉得沉重？', hint: '可以只是描述那个感觉，不用分析原因', placeholder: '让我觉得沉重的是……' },
+      { emoji: '🪨', text: '这种沉重感，像是压在妳身体的哪个部位？', hint: '有时候情绪是有身体感觉的，比如胸口、肩膀、眼眶', placeholder: '感觉像是……' },
+      { emoji: '🌑', text: '如果要给这段阅读选一个颜色，妳会选什么色？', hint: '直觉选就好', placeholder: '我觉得是……色' }
     ],
     expand: [
-      { emoji: '🕯️', text: '在这份沉重里，有没有一点点微光让你觉得还好？', hint: '也许有，也许没有，都可以', placeholder: '如果有的话，那是……' },
-      { emoji: '💬', text: '你想跟谁聊聊你刚才读到的东西？', hint: '有时候沉重需要分享出去才会轻一点', placeholder: '我想跟……聊聊' }
+      { emoji: '🕯️', text: '在这份沉重里，有没有一点点微光让妳觉得还好？', hint: '也许有，也许没有，都可以', placeholder: '如果有的话，那是……' },
+      { emoji: '💬', text: '妳想跟谁聊聊妳刚才读到的东西？', hint: '有时候沉重需要分享出去才会轻一点', placeholder: '我想跟……聊聊' }
     ]
   },
   curious: {
     core: [
-      { emoji: '🔍', text: '你最好奇或最想知道后面会发生什么的是哪个部分？', hint: '可能是一个悬念、一个角色的走向、或一个还没揭开的谜', placeholder: '我最好奇的是……' },
-      { emoji: '🗺️', text: '读到现在，你对这个故事/这本书最大的期待是什么？', hint: '你希望接下来看到什么', placeholder: '我期待……' },
-      { emoji: '🧲', text: '是什么在吸引你继续读下去？', hint: '故事？人物？写法？还是某种说不清的感觉？', placeholder: '吸引我的是……' }
+      { emoji: '🔍', text: '妳最好奇或最想知道后面会发生什么的是哪个部分？', hint: '可能是一个悬念、一个角色的走向、或一个还没揭开的谜', placeholder: '我最好奇的是……' },
+      { emoji: '🗺️', text: '读到现在，妳对这个故事/这本书最大的期待是什么？', hint: '妳希望接下来看到什么', placeholder: '我期待……' },
+      { emoji: '🧲', text: '是什么在吸引妳继续读下去？', hint: '故事？人物？写法？还是某种说不清的感觉？', placeholder: '吸引我的是……' }
     ],
     expand: [
-      { emoji: '📌', text: '你有没有在看的时候产生过什么自己的猜测？', hint: '猜测后面会发生什么，或者某个伏笔是什么意思', placeholder: '我猜……' },
-      { emoji: '🌏', text: '这本书让你对现实中的什么事情产生了新的好奇？', hint: '也许看完之后你想去了解某个话题', placeholder: '我想去了解……' }
+      { emoji: '📌', text: '妳有没有在看的时候产生过什么自己的猜测？', hint: '猜测后面会发生什么，或者某个伏笔是什么意思', placeholder: '我猜……' },
+      { emoji: '🌏', text: '这本书让妳对现实中的什么事情产生了新的好奇？', hint: '也许看完之后妳想去了解某个话题', placeholder: '我想去了解……' }
     ]
   },
   confused: {
     core: [
-      { emoji: '🌀', text: '你觉得复杂或困惑的点是什么？', hint: '看不懂、矛盾的感觉、或者说不清为什么，都算', placeholder: '让我困惑的是……' },
-      { emoji: '🎭', text: '你对书中的某个角色或情节有没有"又理解又不理解"的感觉？', hint: '那种纠结的、矛盾的感受反而说明你在深入思考', placeholder: '我对……的感觉很矛盾，因为……' },
-      { emoji: '🔮', text: '你觉得作者想表达什么？你自己的理解是什么？', hint: '没有标准答案，你的理解就是最好的理解', placeholder: '我觉得作者可能想说……' }
+      { emoji: '🌀', text: '妳觉得复杂或困惑的点是什么？', hint: '看不懂、矛盾的感觉、或者说不清为什么，都算', placeholder: '让我困惑的是……' },
+      { emoji: '🎭', text: '妳对书中的某个角色或情节有没有"又理解又不理解"的感觉？', hint: '那种纠结的、矛盾的感受反而说明妳在深入思考', placeholder: '我对……的感觉很矛盾，因为……' },
+      { emoji: '🔮', text: '妳觉得作者想表达什么？妳自己的理解是什么？', hint: '没有标准答案，妳的理解就是最好的理解', placeholder: '我觉得作者可能想说……' }
     ],
     expand: [
-      { emoji: '🧶', text: '虽然现在看不太明白，但你觉得继续看下去会懂吗？', hint: '有时候困惑是一种邀请，邀请你继续往下看', placeholder: '我觉得……' },
-      { emoji: '💭', text: '这个困惑让你想到了生活中的什么吗？', hint: '有时候我们被书困惑，是因为它撞上了我们自己的困惑', placeholder: '它让我想到……' }
+      { emoji: '🧶', text: '虽然现在看不太明白，但妳觉得继续看下去会懂吗？', hint: '有时候困惑是一种邀请，邀请妳继续往下看', placeholder: '我觉得……' },
+      { emoji: '💭', text: '这个困惑让妳想到了生活中的什么吗？', hint: '有时候我们被书困惑，是因为它撞上了我们自己的困惑', placeholder: '它让我想到……' }
     ]
   }
 };
@@ -1051,16 +1051,19 @@ function renderQuestion() {
       <div class="question-emoji">${q.emoji}</div>
       <div class="question-text">${q.text}</div>
       <div class="question-hint">${q.hint}</div>
-      <textarea class="answer-textarea" id="answerInput" placeholder="${q.placeholder || '写下你的想法……'}" oninput="autoGrow(this)">${savedAnswer}</textarea>
+      <textarea class="answer-textarea" id="answerInput" placeholder="${q.placeholder || '写下妳的想法……'}" oninput="autoGrow(this)">${savedAnswer}</textarea>
       <div class="question-actions">
-        ${currentQuestionIndex > 0 ? '<button class="btn-secondary" onclick="prevQuestion()">上一个</button>' : '<button class="btn-secondary" onclick="skipQuestion()">跳过</button>'}
-        <button class="btn-next" onclick="${isLast ? (isExpanded ? 'finish()' : 'showExpandOption()') : 'nextQuestion()'}">
-          ${isLast ? (isExpanded ? '完成记录 ✨' : '下一步') : '下一个 →'}
-        </button>
+        ${isLast && !isExpanded
+          ? `<button class="btn-secondary" onclick="finish()">记录完成 ✨</button>
+             <button class="btn-next" onclick="showExpandOption()">还想多写几个？ ✍️</button>`
+          : isLast && isExpanded
+            ? `${currentQuestionIndex > 0 ? '<button class="btn-secondary" onclick="prevQuestion()">上一个</button>' : '<button class="btn-secondary" onclick="skipQuestion()">跳过</button>'}
+               <button class="btn-next" onclick="finish()">记录完成 ✨</button>`
+            : `${currentQuestionIndex > 0 ? '<button class="btn-secondary" onclick="prevQuestion()">上一个</button>' : '<button class="btn-secondary" onclick="skipQuestion()">跳过</button>'}
+               <button class="btn-next" onclick="nextQuestion()">下一个 →</button>`
+        }
       </div>
     </div>
-    ${isLast && !isExpanded ? `<div class="expand-section"><button class="expand-btn" onclick="showExpandOption()">还想多写几个？ ↓</button></div>` : ''}
-    ${isLast ? `<div style="text-align:center;margin-top:4px;opacity:0;animation:fadeUp 0.5s ease 0.3s forwards;"><button class="btn-secondary" style="display:inline-block;width:auto;padding:10px 24px;font-size:13px;" onclick="finish()">就写到这里 ✓</button></div>` : ''}
   `;
   setTimeout(() => {
     const textarea = document.getElementById('answerInput');
