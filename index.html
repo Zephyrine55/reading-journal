@@ -755,6 +755,61 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+  /* ===== BOOK SELECT CHIPS ===== */
+  .book-select-wrapper {
+    position: relative;
+  }
+
+  .book-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .book-chips:empty {
+    display: none;
+  }
+
+  .book-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    font-size: 13px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .book-chip:active {
+    transform: scale(0.96);
+  }
+
+  .book-chip.selected {
+    border-color: var(--accent-warm);
+    background: rgba(212, 149, 106, 0.08);
+    color: var(--accent-deep);
+    font-weight: 500;
+  }
+
+  .book-chip .chip-icon {
+    font-size: 12px;
+  }
+
+  .book-chips-label {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    display: block;
+  }
+
   .date-display {
     text-align: center;
     font-size: 12px;
@@ -786,7 +841,10 @@
     <div class="book-info-card">
       <div class="input-group">
         <label class="input-label">📚 书名</label>
-        <input class="text-input" type="text" id="bookTitle" placeholder="妳在读什么？">
+        <div class="book-select-wrapper" id="bookSelectWrapper">
+          <div class="book-chips" id="bookChips"></div>
+          <input class="text-input" type="text" id="bookTitle" placeholder="妳在读什么？" autocomplete="off">
+        </div>
       </div>
       <div class="input-group">
         <label class="input-label">📄 今天看到哪了？</label>
@@ -967,6 +1025,49 @@ let currentExportImageUrl = null;
 
 updateHistoryBadge();
 
+// ===== BOOK CHIPS =====
+function getExistingBookTitles() {
+  const titles = [];
+  const seen = new Set();
+  allRecords.forEach(r => {
+    if (!seen.has(r.bookTitle)) {
+      seen.add(r.bookTitle);
+      titles.push(r.bookTitle);
+    }
+  });
+  return titles;
+}
+
+function renderBookChips() {
+  const container = document.getElementById('bookChips');
+  const titles = getExistingBookTitles();
+  if (titles.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  let html = '<span class="book-chips-label">最近在读：</span>';
+  titles.slice(0, 6).forEach(title => {
+    const escaped = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    html += `<span class="book-chip" onclick="selectBookChip(this, '${escaped}')"><span class="chip-icon">📖</span>${title}</span>`;
+  });
+  container.innerHTML = html;
+}
+
+function selectBookChip(chip, title) {
+  const input = document.getElementById('bookTitle');
+  const wasSelected = chip.classList.contains('selected');
+  document.querySelectorAll('.book-chip').forEach(c => c.classList.remove('selected'));
+  if (wasSelected) {
+    input.value = '';
+  } else {
+    chip.classList.add('selected');
+    input.value = title;
+  }
+  updateStartBtn();
+}
+
+renderBookChips();
+
 // ===== DATE =====
 function showDate() {
   const now = new Date();
@@ -1000,7 +1101,10 @@ function updateStartBtn() {
   const title = document.getElementById('bookTitle').value.trim();
   document.getElementById('startBtn').disabled = !(title && selectedEmotions.length > 0);
 }
-document.getElementById('bookTitle').addEventListener('input', updateStartBtn);
+document.getElementById('bookTitle').addEventListener('input', function() {
+  document.querySelectorAll('.book-chip').forEach(c => c.classList.remove('selected'));
+  updateStartBtn();
+});
 
 // ===== GENERATE QUESTIONS =====
 function generateQuestions() {
@@ -1180,6 +1284,7 @@ function restart() {
   document.querySelectorAll('.emotion-btn').forEach(btn => btn.classList.remove('selected'));
   document.getElementById('multiHint').classList.remove('visible');
   document.getElementById('startBtn').disabled = true;
+  renderBookChips();
   switchScreen('screen1');
 }
 
